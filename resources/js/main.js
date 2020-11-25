@@ -19,7 +19,7 @@ renderTodoList();
 
 // User clicked on the add button
 // If there is any text inside the item field, add that text to the todo list
-document.getElementById("add").addEventListener("click", function() {
+document.getElementById("add").addEventListener("click", function () {
   //Collects the data inputted by the user
   var value = document.getElementById("item").value;
   if (value) {
@@ -29,7 +29,7 @@ document.getElementById("add").addEventListener("click", function() {
 });
 
 //Allows users to also add a task by pressing the enter key
-document.getElementById("item").addEventListener("keydown", function(e) {
+document.getElementById("item").addEventListener("keydown", function (e) {
   var value = this.value;
   if ((e.code === "Enter" || e.code === "NumpadEnter") && value) {
     addItem(value);
@@ -51,21 +51,28 @@ function renderTodoList() {
   //if (!data.todo.length && !data.completed.length  && !data.priority.length) return;
   if (!data.todo.length && !data.completed.length) return;
 
-  //displays for priority list
-  if (data.priority) { //checks that the priority list exists
+  //---------------------------------------------------------------
+  //TASK 4
+  //displays the priority list
+  if (data.priority) {
+    //first checks that the list exists
+    //checks that the priority list exists
     for (var k = 0; k < data.priority.length; k++) {
-      console.log("testing");
       var value = data.priority[k];
+      //calls the add item to DOM function which adds
+      //each item in the priority list to the UI
       addItemToDOM(value, false, true);
     }
   } else {
     //bug fixing
     localStorage.clear();
   }
+  //---------------------------------------------------------------
 
   //If they are not empty then this code will run to display each item in a for loop
   for (var i = 0; i < data.todo.length; i++) {
     var value = data.todo[i];
+    //automatically assumes parameters are false if not explicity stated
     addItemToDOM(value);
   }
 
@@ -92,15 +99,19 @@ function removeItem() {
   } else if (id === "completed") {
     data.completed.splice(data.completed.indexOf(value), 1);
   } else {
-    console.log("HI");
+    //---------------------------------------------------------------
+    //TASK 5
     data.priority.splice(data.priority.indexOf(value), 1);
+    //---------------------------------------------------------------
   }
   dataObjectUpdated();
 
   parent.removeChild(item);
 }
 
-//complete this function
+//---------------------------------------------------------------
+//TASK 6
+//This follows a very similar format to the complet function
 function prioritise() {
   var item = this.parentNode.parentNode;
   var parent = item.parentNode;
@@ -108,25 +119,16 @@ function prioritise() {
   var value = item.innerText;
 
   if (id === "todo") {
-    console.log("HI1");
     data.todo.splice(data.todo.indexOf(value), 1);
-    console.log("HI1.5");
     data.priority.push(value);
-    console.log("HI1.8");
   } else if (id === "completed") {
-    console.log("HI2");
     data.completed.splice(data.completed.indexOf(value), 1);
     data.priority.push(value);
   } else {
-    console.log("HI3");
     data.priority.splice(data.priority.indexOf(value), 1);
     data.todo.push(value);
   }
-
-  console.log("check here");
   dataObjectUpdated();
-
-  console.log("check");
 
   // Check if the item should be added to the completed list or to re-added to the todo list
   var target =
@@ -136,18 +138,19 @@ function prioritise() {
       ? document.getElementById("priority")
       : document.getElementById("todo");
 
-  console.log("target");
-  console.log(target);
-
   parent.removeChild(item);
   target.insertBefore(item, target.childNodes[0]);
 }
+//---------------------------------------------------------------
 
 function completeItem() {
   var item = this.parentNode.parentNode;
   var parent = item.parentNode;
   var id = parent.id;
   var value = item.innerText;
+
+  //---------------------------------------------------------------
+  //TASK 5
 
   if (id === "todo") {
     //if the item is not completed
@@ -164,15 +167,10 @@ function completeItem() {
     data.todo.push(value);
   }
   dataObjectUpdated();
+  //---------------------------------------------------------------
 
   // Check if the item should be added to the completed list or to re-added to the todo list
   // The question mark operator works similarly to if ... else statements.
-
-  // var target =
-  //   id === "todo"
-  //     ? document.getElementById("completed") //if id is todo then make it completed
-  //     : document.getElementById("todo"); //otherwise make the id completed
-
   var target =
     id === "todo"
       ? document.getElementById("completed")
@@ -186,6 +184,8 @@ function completeItem() {
 
 // Adds a new item to the todo list
 function addItemToDOM(text, completed, priority) {
+  //TASK 3 - you need to add a third switch statement
+  // this is in case the id of the item in HTML is priority
   var list = completed
     ? document.getElementById("completed")
     : priority
@@ -205,10 +205,12 @@ function addItemToDOM(text, completed, priority) {
   // Add click event for removing the item
   remove.addEventListener("click", removeItem);
 
+  //Here you add the priority button to the UI
+  //This needs to have a different name to 'priority'
   var highPriority = document.createElement("button");
   highPriority.classList.add("highPriority");
   highPriority.innerHTML = prioritySVG;
-
+  //We also need to make sure each button has a event listener attached
   highPriority.addEventListener("click", prioritise);
 
   var complete = document.createElement("button");
@@ -219,9 +221,12 @@ function addItemToDOM(text, completed, priority) {
   complete.addEventListener("click", completeItem);
 
   buttons.appendChild(remove);
+  // TASK 3 - we also need to make sure that the button is also added
+  // to the list of buttons that are put onto the UI
   buttons.appendChild(highPriority);
   buttons.appendChild(complete);
   item.appendChild(buttons);
 
   list.insertBefore(item, list.childNodes[0]);
 }
+
